@@ -90,6 +90,8 @@ class MyPanel extends JPanel {
 
     private ArrayList<TestingSquare> sqlist = new ArrayList<TestingSquare>();
     private TestingSquare sqSelected = null;
+    private int offset_x = 0;
+    private int offset_y = 0;
 
     public MyPanel() {
         setBorder(BorderFactory.createLineBorder(Color.black));
@@ -118,6 +120,8 @@ class MyPanel extends JPanel {
                         index = i;
                         sqSelected = sq;
                         selecting = true;
+                        offset_x = e.getX() - sqSelected.x;
+                        offset_y = e.getY() - sqSelected.y;
                     }
                 }
                 
@@ -129,15 +133,15 @@ class MyPanel extends JPanel {
                     return;
                 }
                 
-                moveSquare(e.getX(), e.getY(), sqSelected);
+                moveSquare(e.getX()-offset_x, e.getY()-offset_y, sqSelected);
             }
         });
 
         addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
                 if (sqSelected.isPressed()) {
+                    moveSquare(e.getX()-offset_x, e.getY()-offset_y, sqSelected);
                     System.out.println("Mouse dragged, X: " + e.getX() + " Y: " + e.getY());
-                    moveSquare(e.getX(), e.getY(), sqSelected);
                 }
             }
         });
