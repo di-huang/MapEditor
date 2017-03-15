@@ -7,15 +7,15 @@ import java.awt.Color;
  * @author dihuang
  *
  */
-public class TestingSquare {
+public class Entity {
 
     public int x, y;
-    public final int width = 20;
+    public static final int width = 20;
 
     private Color color;
     private boolean pressed = false;
 
-    public TestingSquare(int x, int y, Color color) {
+    public Entity(int x, int y, Color color) {
         this.x = x;
         this.y = y;
         this.color = color;
