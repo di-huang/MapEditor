@@ -1,4 +1,4 @@
-package unit_testing;
+package unit_testing.visualizer;
 
 import javax.swing.SwingUtilities;
 
