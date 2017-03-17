@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import unit_testing.editor.Dashboard;
 import unit_testing.entity.CustomizedEntity;
 import unit_testing.map.Grid;
+import unit_testing.map.Map;
 
 public class MyPanel extends JPanel {
 
@@ -51,14 +52,16 @@ public class MyPanel extends JPanel {
 					repaint();
 					return;
 				}
-
-				moveEntity(e.getX() - offset_x, e.getY() - offset_y, enSelected);
+				
+				if (enSelected != null){
+					moveEntity(e.getX() - offset_x, e.getY() - offset_y, enSelected);
+				}
 			}
 		});
 
 		addMouseMotionListener(new MouseAdapter() {
 			public void mouseDragged(MouseEvent e) {
-				if (enSelected.isChosen()) {
+				if (enSelected != null && enSelected.isChosen()) {
 					moveEntity(e.getX() - offset_x, e.getY() - offset_y, enSelected);
 				}
 			}
@@ -66,19 +69,23 @@ public class MyPanel extends JPanel {
 
 		addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
-				enSelected.finished();
+				if (enSelected != null){
+					enSelected.finished();
+				}
 			}
 		});
 	}
 	
 	private void drawMap(int x, int y, Graphics g){
-    	g.drawLine(x, y, x, y + map_size);
-    	g.drawLine(x, y, x + map_size, y);
-    	for(int i = 1; i <= map_size/Grid.size; i++){
-			g.drawLine(x, Grid.size*i + y, map_size + x, Grid.size*i + y);
+		int height = Map.height * Grid.size;
+		int width = Map.width * Grid.size;
+    	g.drawLine(x, y, x, y + height);
+    	g.drawLine(x, y, x + width, y);
+    	for(int i = 1; i <= height/Grid.size; i++){
+			g.drawLine(x, Grid.size*i + y, width + x, Grid.size*i + y);
 		}
-    	for(int i = 1; i <= map_size/Grid.size; i++){
-			g.drawLine(Grid.size*i + x, y, Grid.size*i + x, map_size + y);
+    	for(int i = 1; i <= width/Grid.size; i++){
+			g.drawLine(Grid.size*i + x, y, Grid.size*i + x, height + y);
 		}
     }
 	
@@ -100,8 +107,8 @@ public class MyPanel extends JPanel {
 	protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        drawMap(Grid.size, Grid.size, g);
-        drawBoard(map_size + 2*Grid.size, Grid.size, g);
+        drawMap(Map.x, Map.y, g);
+        drawBoard(Dashboard.x, Dashboard.y, g);
         
         for (CustomizedEntity en : enlist) {
             g.setColor(en.color);
