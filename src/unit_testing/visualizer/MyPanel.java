@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import unit_testing.editor.Editor;
 import unit_testing.editor.Item;
 import unit_testing.editor.Menu;
-import unit_testing.editor.Editor;
 import unit_testing.editor.MenuItem;
 import unit_testing.entity.Entity;
 import unit_testing.entity.EntityFactory;
@@ -35,7 +35,6 @@ public class MyPanel extends JPanel {
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				ArrayList<Item> items = Editor.items;
-				System.out.println("Mouse pressed, X: " + e.getX() + " Y: " + e.getY());
 
 				boolean moving = false;
 				int index = 0;					// avoid item-passing-underneath-bug
@@ -80,12 +79,15 @@ public class MyPanel extends JPanel {
 					if(g != null && g.isEmpty()){
 						EntityFactory fac = new EntityFactory();
 						Entity en = fac.getEntity(itemSelected.description);
+						en.setX(g.getX());
+						en.setY(g.getY());
 						g.setContent(en);
 					}
 					moveItem(itemSelected.x_home, itemSelected.y_home, itemSelected);
 				}
 			}
 		});
+		
 	}
 	
 	private void drawMap(int x, int y, Graphics g){

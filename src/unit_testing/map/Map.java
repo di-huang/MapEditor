@@ -13,7 +13,7 @@ public class Map implements Tickable{
 	public static int x, y;
 	public static int width, height;
 	
-	public int width_num, height_num;
+	public static int width_num, height_num;
 	
 	public Map(int x, int y, int w, int h){
 		this.x = x;
