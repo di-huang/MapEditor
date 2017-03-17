@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import unit_testing.editor.CustomItem;
-import unit_testing.editor.CustomMenu;
+import unit_testing.editor.Item;
+import unit_testing.editor.Menu;
 import unit_testing.editor.Editor;
 import unit_testing.editor.MenuItem;
 import unit_testing.entity.Entity;
@@ -25,7 +25,7 @@ import unit_testing.map.Map;
  */
 public class MyPanel extends JPanel {
 
-	private CustomItem itemSelected = null;
+	private Item itemSelected = null;
 	private int x_offset = 0;
 	private int y_offset = 0;
 	
@@ -34,13 +34,13 @@ public class MyPanel extends JPanel {
 		
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-				ArrayList<CustomItem> items = Editor.items;
+				ArrayList<Item> items = Editor.items;
 				System.out.println("Mouse pressed, X: " + e.getX() + " Y: " + e.getY());
 
 				boolean moving = false;
 				int index = 0;					// avoid item-passing-underneath-bug
 				for (int i = 0; i < items.size(); i++) {
-					CustomItem ci = items.get(i);
+					Item ci = items.get(i);
 					if (ci.isWithin(e.getX(), e.getY())) {
 						index = i;
 						itemSelected = ci;
@@ -102,15 +102,15 @@ public class MyPanel extends JPanel {
     }
 	
 	private void drawBoard(int x, int y, Graphics g){
-		int height = CustomMenu.height;
-		int width = CustomMenu.width;
+		int height = Menu.height;
+		int width = Menu.width;
     	g.drawLine(x, y, x, y + height);
     	g.drawLine(x, y, x + width, y);
     	g.drawLine(x, y + height, x + width, y + height);
     	g.drawLine(x + width, y, x + width, y + height);
     	
     	// draw menu
-    	for (MenuItem mi : CustomMenu.menu) {
+    	for (MenuItem mi : Menu.menu) {
             g.setColor(mi.color);
             g.fill3DRect(mi.x_home, mi.y_home, Grid.size, Grid.size, false);
             g.setColor(Color.BLACK);
@@ -126,7 +126,7 @@ public class MyPanel extends JPanel {
         g.fillRect(X, Y, Grid.size, Grid.size);
 	}
 
-	private void moveItem(int x, int y, CustomItem ci) {
+	private void moveItem(int x, int y, Item ci) {
 		ci.x = x;
 		ci.y = y;
 		repaint();
@@ -136,7 +136,7 @@ public class MyPanel extends JPanel {
         super.paintComponent(g);
         
         drawMap(Map.x, Map.y, g);
-        drawBoard(CustomMenu.x, CustomMenu.y, g);
+        drawBoard(Menu.x, Menu.y, g);
         Grid[][] map = Map.map;
         for(int i = 0; i < map.length; i++){
         	for(int j = 0; j < map[i].length; j++){
@@ -146,8 +146,8 @@ public class MyPanel extends JPanel {
         	}
         }
         
-        ArrayList<CustomItem> items = Editor.items;
-        for (CustomItem ci : items) {
+        ArrayList<Item> items = Editor.items;
+        for (Item ci : items) {
             g.setColor(ci.color);
             g.fillRect(ci.x, ci.y, Grid.size, Grid.size);
             g.setColor(Color.BLACK);

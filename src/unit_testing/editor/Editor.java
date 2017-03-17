@@ -14,12 +14,12 @@ public class Editor implements Tickable{
 	/**
 	 * Following codes are for mock test
 	 */
-	public static ArrayList<CustomItem> items = new ArrayList<CustomItem>();
+	public static ArrayList<Item> items = new ArrayList<Item>();
 	
 	public Editor(){
-		MenuItem[] menu = CustomMenu.menu;
+		MenuItem[] menu = Menu.menu;
 		for(int i = 0; i < menu.length; i++){
-			items.add(new CustomItem(menu[i].description, menu[i].pos, menu[i].color));
+			items.add(new Item(menu[i].description, menu[i].pos, menu[i].color));
 		}
 	}
 	

@@ -7,7 +7,7 @@ import java.awt.Color;
  * @author dihuang
  *
  */
-public class CustomItem extends MenuItem implements EditMovable{
+public class Item extends MenuItem implements Editable{
 	
 	private boolean chosen = false;
 	
@@ -36,7 +36,7 @@ public class CustomItem extends MenuItem implements EditMovable{
 	 */
 	public int x, y;		// x and y coordinates on the map
 	
-	public CustomItem(String des, int pos, Color color){
+	public Item(String des, int pos, Color color){
 		super(des, pos, color);
 		x = x_home;
 		y = y_home;

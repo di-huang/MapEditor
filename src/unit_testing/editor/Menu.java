@@ -10,7 +10,7 @@ import unit_testing.map.Map;
  * @author dihuang
  *
  */
-public class CustomMenu{
+public class Menu{
 	
 	/**
 	 * Following codes are for mock test
@@ -21,6 +21,7 @@ public class CustomMenu{
 	public static MenuItem[] menu = {
 			new MenuItem("solid", 1, Color.RED),
 			new MenuItem("fixed", 2, Color.GREEN),
+			new MenuItem("player", 3, Color.ORANGE),
 	};
 
 }

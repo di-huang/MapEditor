@@ -15,6 +15,8 @@ public class EntityFactory {
 				return new SolidEntity(Color.RED);
 			case "fixed":
 				return new FixedEntity(Color.GREEN);
+			case "player":
+				return new Player(Color.ORANGE);
 		}
 		return null;
 	}

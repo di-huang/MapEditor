@@ -25,7 +25,7 @@ public class MenuItem{
 		size = Grid.size;
 		this.pos = pos;
 		this.color = color;
-		x_home = CustomMenu.x + Grid.size;
+		x_home = Menu.x + Grid.size;
 		y_home = Grid.size * pos;
 	}
 	
