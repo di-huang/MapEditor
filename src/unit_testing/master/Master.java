@@ -1,6 +1,6 @@
 package unit_testing.master;
 
-import unit_testing.editor.Dashboard;
+import unit_testing.editor.Editor;
 import unit_testing.map.Map;
 import unit_testing.visualizer.Visualizer;
 
@@ -12,13 +12,13 @@ import unit_testing.visualizer.Visualizer;
 public class Master implements Tickable, Runnable{
 	
 	private Map M;
+	private Editor E;
 	private Visualizer V;
-	private Dashboard D;
 	private boolean running;
 	
-	public Master(Map m, Dashboard d, Visualizer v) {
+	public Master(Map m, Editor e, Visualizer v) {
 		M = m;
-		D = d;
+		E = e;
 		V = v;
 		running = false;
 	}
@@ -55,6 +55,7 @@ public class Master implements Tickable, Runnable{
 	@Override
 	public void tick() {
 		M.tick();
+		E.tick();
 		V.tick();
 	}
 	

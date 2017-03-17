@@ -15,13 +15,13 @@ public class Grid {
 	
 	private Color color;
 	private Entity content;
-	private int x, y;
+	private int x_map, y_map;
 	
 	public Grid(int x, int y){
 		color = null;
 		content = null;
-		this.x = x;
-		this.y = y;
+		x_map = x;
+		y_map = y;
 	}
 
 	public Color getColor() {
@@ -39,13 +39,23 @@ public class Grid {
 	public void setContent(Entity content) {
 		this.content = content;
 	}
+	
+	public boolean isEmpty(){
+		return content == null;
+	}
 
 	public int getX() {
-		return x;
+		return x_map;
 	}
 
 	public int getY() {
-		return y;
+		return y_map;
 	}
+	
+	public boolean isWithin(int x_mouse, int y_mouse) {
+		int x = (x_map+1)*Grid.size;
+		int y = (y_map+1)*Grid.size;
+        return x_mouse >= x && x_mouse <= x + size && y_mouse >= y && y_mouse <= y + size;
+    }
 	
 }

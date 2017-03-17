@@ -2,14 +2,14 @@ package unit_testing.entity;
 
 import java.awt.Color;
 
-import unit_testing.environment.Path;
+import unit_testing.environment.Passable;
 
 /**
  * 
  * @author dihuang
  *
  */
-public class SolidEntity extends AbstractEntity implements Entity, Path{
+public class SolidEntity extends Entity implements Passable{
 	
 	@Override
 	public boolean isBlocked() {
@@ -19,23 +19,25 @@ public class SolidEntity extends AbstractEntity implements Entity, Path{
 	/**
 	 * Following codes are for mock test
 	 */
-    private Color color;
+    
     private boolean blocked;
     
-    public SolidEntity(int x, int y, Color color) {
-        this.x = x;
-        this.y = y;
-        HP = 100;
-        this.color = color;
+    public SolidEntity(){
+    	HP = 100;
         blocked = true;
+        des = "solid";
     }
-
-	public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
+    
+    public SolidEntity(Color color) {
+    	this();
         this.color = color;
     }
     
+    public SolidEntity(int x, int y, Color color) {
+    	this();
+        x_map = x;
+        y_map = y;
+        this.color = color;
+    }
+
 }

@@ -9,76 +9,88 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import unit_testing.editor.Dashboard;
-import unit_testing.entity.CustomizedEntity;
+import unit_testing.editor.CustomItem;
+import unit_testing.editor.CustomMenu;
+import unit_testing.editor.Editor;
+import unit_testing.editor.MenuItem;
+import unit_testing.entity.Entity;
+import unit_testing.entity.EntityFactory;
 import unit_testing.map.Grid;
 import unit_testing.map.Map;
 
+/**
+ * 
+ * @author dihuang
+ *
+ */
 public class MyPanel extends JPanel {
 
-	private ArrayList<CustomizedEntity> enlist;
-	private CustomizedEntity enSelected = null;
-	private int offset_x = 0;
-	private int offset_y = 0;
-	public static int map_size;
+	private CustomItem itemSelected = null;
+	private int x_offset = 0;
+	private int y_offset = 0;
 	
 	public MyPanel() {
 		setBorder(BorderFactory.createLineBorder(Color.black));
 		
-		map_size = Visualizer.HEIGHT - 3*Grid.size;
-		enlist = Dashboard.menu;
-		
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
+				ArrayList<CustomItem> items = Editor.items;
 				System.out.println("Mouse pressed, X: " + e.getX() + " Y: " + e.getY());
 
-				boolean selecting = false;
-				int index = 0;
-				for (int i = 0; i < enlist.size(); i++) {
-					CustomizedEntity en = enlist.get(i);
-					if (en.isWithin(e.getX(), e.getY()) && i >= index) {
+				boolean moving = false;
+				int index = 0;					// avoid item-passing-underneath-bug
+				for (int i = 0; i < items.size(); i++) {
+					CustomItem ci = items.get(i);
+					if (ci.isWithin(e.getX(), e.getY())) {
 						index = i;
-						enSelected = en;
-						selecting = true;
-						offset_x = e.getX() - enSelected.x;
-						offset_y = e.getY() - enSelected.y;
+						itemSelected = ci;
+						moving = true;
+						x_offset = e.getX() - itemSelected.x;
+						y_offset = e.getY() - itemSelected.y;
 					}
 				}
 
-				if (selecting) {
-					enSelected.chosen();
-					enlist.remove(index);
-					enlist.add(enSelected);
+				if (moving) {
+					itemSelected.chosen();
+					items.remove(index);		// avoid item-passing-underneath-bug
+					items.add(itemSelected);	// avoid item-passing-underneath-bug
 					repaint();
 					return;
 				}
 				
-				if (enSelected != null){
-					moveEntity(e.getX() - offset_x, e.getY() - offset_y, enSelected);
+				if (itemSelected != null){
+					moveItem(e.getX() - x_offset, e.getY() - y_offset, itemSelected);
 				}
 			}
 		});
 
 		addMouseMotionListener(new MouseAdapter() {
 			public void mouseDragged(MouseEvent e) {
-				if (enSelected != null && enSelected.isChosen()) {
-					moveEntity(e.getX() - offset_x, e.getY() - offset_y, enSelected);
+				if (itemSelected != null && itemSelected.isChosen()) {
+					moveItem(e.getX() - x_offset, e.getY() - y_offset, itemSelected);
 				}
 			}
 		});
 
 		addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
-				if (enSelected != null){
-					enSelected.finished();
+				if (itemSelected != null){
+					itemSelected.finished();
+					Grid g = Map.gridChosen(e.getX(), e.getY());
+					if(g != null && g.isEmpty()){
+						EntityFactory fac = new EntityFactory();
+						Entity en = fac.getEntity(itemSelected.description);
+						g.setContent(en);
+					}
+					moveItem(itemSelected.x_home, itemSelected.y_home, itemSelected);
 				}
 			}
 		});
 	}
 	
 	private void drawMap(int x, int y, Graphics g){
-		int height = Map.height * Grid.size;
-		int width = Map.width * Grid.size;
+		int height = Map.height;
+		int width = Map.width;
     	g.drawLine(x, y, x, y + height);
     	g.drawLine(x, y, x + width, y);
     	for(int i = 1; i <= height/Grid.size; i++){
@@ -90,17 +102,33 @@ public class MyPanel extends JPanel {
     }
 	
 	private void drawBoard(int x, int y, Graphics g){
-		int height = Dashboard.height * Grid.size;
-		int width = Dashboard.width * Grid.size;
+		int height = CustomMenu.height;
+		int width = CustomMenu.width;
     	g.drawLine(x, y, x, y + height);
     	g.drawLine(x, y, x + width, y);
     	g.drawLine(x, y + height, x + width, y + height);
     	g.drawLine(x + width, y, x + width, y + height);
+    	
+    	// draw menu
+    	for (MenuItem mi : CustomMenu.menu) {
+            g.setColor(mi.color);
+            g.fill3DRect(mi.x_home, mi.y_home, Grid.size, Grid.size, false);
+            g.setColor(Color.BLACK);
+            g.drawRect(mi.x_home, mi.y_home, Grid.size, Grid.size);
+        }
     }
+	
+	private void drawEntity(int x, int y, Graphics g){
+		Grid[][] map = Map.map;
+		int X = (x+1)*Grid.size;
+		int Y = (y+1)*Grid.size;
+		g.setColor(map[x][y].getContent().getColor());
+        g.fillRect(X, Y, Grid.size, Grid.size);
+	}
 
-	private void moveEntity(int x, int y, CustomizedEntity en) {
-		en.x = x;
-		en.y = y;
+	private void moveItem(int x, int y, CustomItem ci) {
+		ci.x = x;
+		ci.y = y;
 		repaint();
 	}
 	
@@ -108,13 +136,22 @@ public class MyPanel extends JPanel {
         super.paintComponent(g);
         
         drawMap(Map.x, Map.y, g);
-        drawBoard(Dashboard.x, Dashboard.y, g);
+        drawBoard(CustomMenu.x, CustomMenu.y, g);
+        Grid[][] map = Map.map;
+        for(int i = 0; i < map.length; i++){
+        	for(int j = 0; j < map[i].length; j++){
+        		if(!map[i][j].isEmpty()){
+        			drawEntity(i, j, g);
+        		}
+        	}
+        }
         
-        for (CustomizedEntity en : enlist) {
-            g.setColor(en.color);
-            g.fillRect(en.x, en.y, Grid.size, Grid.size);
+        ArrayList<CustomItem> items = Editor.items;
+        for (CustomItem ci : items) {
+            g.setColor(ci.color);
+            g.fillRect(ci.x, ci.y, Grid.size, Grid.size);
             g.setColor(Color.BLACK);
-            g.drawRect(en.x, en.y, Grid.size, Grid.size);
+            g.drawRect(ci.x, ci.y, Grid.size, Grid.size);
         }
     }
 

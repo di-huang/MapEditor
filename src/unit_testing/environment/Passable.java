@@ -5,7 +5,7 @@ package unit_testing.environment;
  * @author dihuang
  *
  */
-public interface Path {
+public interface Passable {
 	
 	public boolean isBlocked();
 	
