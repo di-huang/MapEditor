@@ -1,4 +1,4 @@
-package unit_testing.InputHandler;
+package unit_testing.user_control;
 
 import java.awt.event.KeyEvent;
 

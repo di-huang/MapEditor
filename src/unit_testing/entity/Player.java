@@ -3,6 +3,7 @@ package unit_testing.entity;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 
+import unit_testing.environment.Passable;
 import unit_testing.map.Grid;
 import unit_testing.map.Map;
 
@@ -55,7 +56,20 @@ public class Player extends Entity implements Movable{
 		if(x < 0 || x >= Map.width_num || y < 0 || y >= Map.height_num){
 			return false;
 		}
-		return true;
+		Grid[][] map = Map.map;
+		Entity en = map[x][y].getContent();
+		if(en == null){
+			return true;
+		}
+		if(en instanceof Passable){
+			Passable pEn = (Passable) en;
+			if(pEn.isBlocked()){
+				return false;
+			}
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 }

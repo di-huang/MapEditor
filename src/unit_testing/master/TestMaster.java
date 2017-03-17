@@ -1,8 +1,8 @@
 package unit_testing.master;
 
-import unit_testing.InputHandler.InputHandler;
 import unit_testing.editor.Editor;
 import unit_testing.map.Map;
+import unit_testing.user_control.InputHandler;
 import unit_testing.visualizer.Visualizer;
 
 /**

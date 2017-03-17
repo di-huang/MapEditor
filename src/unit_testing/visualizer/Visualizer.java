@@ -7,8 +7,8 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
 
-import unit_testing.InputHandler.InputHandler;
 import unit_testing.master.Tickable;
+import unit_testing.user_control.InputHandler;
 
 /**
  * 
