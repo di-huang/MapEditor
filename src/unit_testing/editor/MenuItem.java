@@ -29,4 +29,8 @@ public class MenuItem{
 		y_home = Grid.size * pos;
 	}
 	
+	public boolean isWithin(int x_mouse, int y_mouse) {
+        return x_mouse >= x_home && x_mouse <= x_home + size && y_mouse >= y_home && y_mouse <= y_home + size;
+    }
+	
 }

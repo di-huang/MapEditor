@@ -16,8 +16,8 @@ public class Map implements Tickable{
 	public static int width_num, height_num;
 	
 	public Map(int x, int y, int w, int h){
-		this.x = x;
-		this.y = y;
+		Map.x = x;
+		Map.y = y;
 		width_num = w;
 		height_num = h;
 		width = width_num * Grid.size;

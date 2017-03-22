@@ -2,13 +2,10 @@ package unit_testing.visualizer;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JFrame;
 
 import unit_testing.master.Tickable;
-import unit_testing.user_control.InputHandler;
 
 /**
  * 
@@ -18,7 +15,7 @@ import unit_testing.user_control.InputHandler;
 public class Visualizer implements Tickable{
 	
 	public static final int WIDTH = 520;
-	public static final int HEIGHT = 460;
+	public static final int HEIGHT = 480;
 	
 	public Visualizer(){
 		init();
@@ -51,18 +48,6 @@ public class Visualizer implements Tickable{
 		// add a panel on it
 		panel = new MyPanel();
 		frame.add(panel);
-		
-		frame.addKeyListener(new KeyAdapter(){
-			public void keyPressed(KeyEvent e){
-				InputHandler.handle(e);
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-				panel.repaint();
-			}
-		});
 		
 		frame.setVisible(true);
 	}

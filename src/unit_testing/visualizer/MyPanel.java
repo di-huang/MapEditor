@@ -1,12 +1,18 @@
 package unit_testing.visualizer;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import unit_testing.editor.Editor;
@@ -17,6 +23,7 @@ import unit_testing.entity.Entity;
 import unit_testing.entity.EntityFactory;
 import unit_testing.map.Grid;
 import unit_testing.map.Map;
+import unit_testing.user_control.InputHandler;
 
 /**
  * 
@@ -25,11 +32,50 @@ import unit_testing.map.Map;
  */
 public class MyPanel extends JPanel {
 
+	private static final long serialVersionUID = -3021966689273095173L;
 	private Item itemSelected = null;
 	private int x_offset = 0;
 	private int y_offset = 0;
 	
+	boolean editDone = true;
+	boolean dragStart = false;
+	Grid g;
+	
 	public MyPanel() {
+		JButton jb = new JButton("Done"); 
+		jb.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(editDone == true){
+					return;
+				}
+				if(g != null && g.isEmpty()){
+					EntityFactory fac = new EntityFactory();
+					Entity en = fac.getEntity(itemSelected.description);
+					en.setX(g.getX());
+					en.setY(g.getY());
+					g.setContent(en);
+				}
+				dragStart = false;
+				editDone = true;
+				moveItem(itemSelected.x_home, itemSelected.y_home, itemSelected);
+				MyPanel.this.requestFocusInWindow();
+			}
+		});
+		jb.addKeyListener(new KeyAdapter(){
+			public void keyPressed(KeyEvent e){
+				InputHandler.handle(e);
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				MyPanel.this.repaint();
+			}
+		});
+		this.setLayout(new BorderLayout());
+		this.add("South", jb);
+		
 		setBorder(BorderFactory.createLineBorder(Color.black));
 		
 		addMouseListener(new MouseAdapter() {
@@ -43,12 +89,13 @@ public class MyPanel extends JPanel {
 					if (ci.isWithin(e.getX(), e.getY())) {
 						index = i;
 						itemSelected = ci;
+						editDone = false;
 						moving = true;
 						x_offset = e.getX() - itemSelected.x;
 						y_offset = e.getY() - itemSelected.y;
 					}
 				}
-
+				
 				if (moving) {
 					itemSelected.chosen();
 					items.remove(index);		// avoid item-passing-underneath-bug
@@ -58,35 +105,72 @@ public class MyPanel extends JPanel {
 				}
 				
 				if (itemSelected != null){
+					g = Map.gridChosen(e.getX(), e.getY());
+					if(g == null){
+						moveItem(itemSelected.x_home, itemSelected.y_home, itemSelected);
+						return;
+					}
+					
 					moveItem(e.getX() - x_offset, e.getY() - y_offset, itemSelected);
 				}
 			}
+			
 		});
-
+		
 		addMouseMotionListener(new MouseAdapter() {
 			public void mouseDragged(MouseEvent e) {
 				if (itemSelected != null && itemSelected.isChosen()) {
 					moveItem(e.getX() - x_offset, e.getY() - y_offset, itemSelected);
+					if(dragStart){
+						g = Map.gridChosen(e.getX(), e.getY());
+						if(g != null && g.isEmpty()){
+							EntityFactory fac = new EntityFactory();
+							Entity en = fac.getEntity(itemSelected.description);
+							en.setX(g.getX());
+							en.setY(g.getY());
+							g.setContent(en);
+						}
+					}
 				}
 			}
 		});
-
+		
 		addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
 				if (itemSelected != null){
 					itemSelected.finished();
-					Grid g = Map.gridChosen(e.getX(), e.getY());
-					if(g != null && g.isEmpty()){
-						EntityFactory fac = new EntityFactory();
-						Entity en = fac.getEntity(itemSelected.description);
-						en.setX(g.getX());
-						en.setY(g.getY());
-						g.setContent(en);
+					g = Map.gridChosen(e.getX(), e.getY());
+					if(g == null){
+						moveItem(itemSelected.x_home, itemSelected.y_home, itemSelected);
+						return;
 					}
-					moveItem(itemSelected.x_home, itemSelected.y_home, itemSelected);
 				}
 			}
 		});
+		
+		addKeyListener(new KeyAdapter(){
+			public void keyPressed(KeyEvent e){
+				if(e.getKeyCode() == KeyEvent.VK_SHIFT){
+					dragStart = true;
+				}
+				InputHandler.handle(e);
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				MyPanel.this.repaint();
+			}
+			public void keyReleased(KeyEvent e){
+				if(e.getKeyCode() == KeyEvent.VK_SHIFT){
+					dragStart = false;
+				}
+			}
+
+		});
+		
+		this.setFocusable(true);
+		this.requestFocusInWindow();
 		
 	}
 	
